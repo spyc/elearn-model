@@ -24,7 +24,7 @@
  * @license  http://opensource.org/licenses/GPL-3.0 GNU General Public License
  */
 
-namespace App\Model;
+namespace Elearn\Model;
 
 use Illuminate\Database\Eloquent\Model;
 

@@ -24,6 +24,8 @@
  * @license  http://opensource.org/licenses/GPL-3.0 GNU General Public License
  */
 
+namespace Elearn\Model;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Permission extends Model
