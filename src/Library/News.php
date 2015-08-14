@@ -27,7 +27,7 @@
 namespace Elearn\Model\Library;
 
 
-use Illuminate\Database\Eloquent\Model;
+use Elearn\Model\Model;
 
 class News extends Model
 {
