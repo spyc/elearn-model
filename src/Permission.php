@@ -26,9 +26,13 @@
 
 namespace Elearn\Model;
 
-class Permission extends Model
+class Permission extends SoftModel
 {
-
+    /**
+     * Table Name.
+     *
+     * @var string
+     */
     protected $table = 'permissions';
 
 }

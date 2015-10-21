@@ -26,9 +26,9 @@
 
 namespace Elearn\Model\Resource;
 
-use Illuminate\Database\Eloquent\Model;
+use Elearn\Model\SoftModel;
 
-class Link extends Model
+class Link extends SoftModel
 {
     protected $table = 'resource_links';
 

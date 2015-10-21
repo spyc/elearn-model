@@ -27,9 +27,14 @@
 namespace Elearn\Model\Library;
 
 
-use Elearn\Model\Model;
+use Elearn\Model\SoftModel;
 
-class News extends Model
+class News extends SoftModel
 {
+    /**
+     * Table name.
+     *
+     * @var string
+     */
     protected $table = 'library_news';
 }

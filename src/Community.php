@@ -28,5 +28,20 @@ namespace Elearn\Model;
 
 class Community extends Model
 {
+    /**
+     * Table name.
+     *
+     * @var string
+     */
     protected $table = 'community';
+
+    /**
+     * Get Committee.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function committee()
+    {
+        return $this->belongsToMany(User::class, 'committee', 'community', 'pycid');
+    }
 }

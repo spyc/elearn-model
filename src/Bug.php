@@ -26,20 +26,44 @@
 
 namespace Elearn\Model;
 
-class Bug extends Model
+final class Bug extends Model
 {
+    /**
+     * Table name.
+     *
+     * @var string
+     */
     protected $table = 'bug';
 
+    /**
+     * Bug level constant.
+     */
     const SUGGEST = 'Suggest';
     const EMERGENCY = 'Emergency';
     const DANGER = 'Danger';
     const ERROR = 'Error';
     const WARNING = 'Warning';
     const INVALID = 'Invalid';
+
+    /**
+     * Bug level color.
+     */
     const COLOR_SUGGEST = '159818';
     const COLOR_EMERGENCY = 'FC2929';
     const COLOR_DANGER = 'EB6420';
     const COLOR_ERROR = 'FBCA04';
     const COLOR_WARNING = '0052CC';
     const COLOR_INVALID = '5319E7';
+
+    /**
+     * Get the color of bug level.
+     *
+     * @return string
+     */
+    public function getLevelColor()
+    {
+        $level = $this->level;
+        $level_const = self::class . '::COLOR_' . strtoupper($level);
+        return constant($level_const);
+    }
 }
