@@ -26,11 +26,11 @@
 
 namespace Elearn\Model;
 
+use Elearn\Model\Auth\Authorizable;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, AuthorizableContract
@@ -98,6 +98,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
+     * User is in the community
+     *
+     * @param $communityName
+     * @return bool
+     */
+    public function inCommunity($communityName)
+    {
+        foreach ($this->community as $community) {
+            if ($community->name === $communityName) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get post in the community.
      *
      * @param string $community
@@ -112,32 +129,5 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
         return null;
-    }
-
-    public function hasCommunityAuth($community, $permission)
-    {
-        $post = $this->getCommunityPost($community);
-
-        $community = Community::select('id')
-            ->where(['name' => $community])
-            ->first();
-
-        $community = $community->id;
-
-        $permission = Permission::select('id')
-            ->where(['name' => $permission])
-            ->first();
-        $id = $permission->id;
-
-        $auth = DB::table('community_permission')
-            ->select('active')
-            ->where([
-                'community' => $community,
-                'post' => $post,
-                'permission' => $id
-            ])
-            ->first();
-
-        return null !== $auth && $auth->active;
     }
 }
