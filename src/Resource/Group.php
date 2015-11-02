@@ -27,9 +27,9 @@
 namespace Elearn\Model\Resource;
 
 
-use Elearn\Model\Model;
+use Elearn\Model\SoftModel;
 
-class Group extends Model
+class Group extends SoftModel
 {
     protected $table = 'resource_groups';
 

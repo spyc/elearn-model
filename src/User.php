@@ -26,14 +26,16 @@
 
 namespace Elearn\Model;
 
+use Elearn\Model\Auth\Authorizable;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract, AuthorizableContract
 {
-    use Authenticatable, CanResetPassword;
+    use Authenticatable, CanResetPassword, Authorizable;
 
     /**
      * The database table used by the model.
@@ -41,12 +43,21 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * @var string
      */
     protected $table = 'user';
+
+    /**
+     * Primary Key.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'pycid';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = ['name', 'password'];
+
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -55,12 +66,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     protected $hidden = ['password', 'remember_token'];
 
     /**
-     * {@inheritdoc}
+     * Get user community.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function __construct(array $attributes = [])
+    public function community()
     {
-        parent::__construct($attributes);
-        $this->setKeyName('pycid');
+        return $this->belongsToMany(Community::class, 'committee', 'pycid', 'community');
     }
 
     /**
@@ -86,58 +98,36 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
+     * User is in the community
+     *
+     * @param $communityName
+     * @return bool
+     */
+    public function inCommunity($communityName)
+    {
+        foreach ($this->community as $community) {
+            if ($community->name === $communityName) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get post in the community.
      *
      * @param string $community
      *
      * @return string post or null
      */
-    public function getCommunityPost($community)
+    public function getCommunityPost($communityName)
     {
-        $community = Community::select('id')
-            ->where(['name' => $community])
-            ->first();
-
-        $community = $community->id;
-
-        $committee = Committee::select('post')
-            ->where([
-                'pycid' => $this->pycid,
-                'community' => $community
-            ])
-            ->first();
-
-        if (null === $committee) {
-            return null;
+        foreach ($this->community as $community) {
+            if ($community->name === $communityName) {
+                return $this->pivot->post;
+            }
         }
-
-        return $committee->post;
-    }
-
-    public function hasCommunityAuth($community, $permission)
-    {
-        $post = $this->getCommunityPost($community);
-
-        $community = Community::select('id')
-            ->where(['name' => $community])
-            ->first();
-
-        $community = $community->id;
-
-        $permission = Permission::select('id')
-            ->where(['name' => $permission])
-            ->first();
-        $id = $permission->id;
-
-        $auth = DB::table('community_permission')
-            ->select('active')
-            ->where([
-                'community' => $community,
-                'post' => $post,
-                'permission' => $id
-            ])
-            ->first();
-
-        return null !== $auth && $auth->active;
+        return null;
     }
 }
