@@ -115,6 +115,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
+     * Check User is super admin.
+     *
+     * @return bool
+     */
+    public function isSudoer()
+    {
+        return $this->inCommunity('sudoer');
+    }
+
+    /**
      * Get post in the community.
      *
      * @param string $community
