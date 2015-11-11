@@ -26,6 +26,7 @@
 
 namespace Elearn\Model;
 
+use DB;
 use Elearn\Model\Auth\Authorizable;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -127,17 +128,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     /**
      * Get post in the community.
      *
-     * @param string $community
+     * @param string $communityName
      *
      * @return string post or null
      */
     public function getCommunityPost($communityName)
     {
-        foreach ($this->community as $community) {
-            if ($community->name === $communityName) {
-                return $this->pivot->post;
-            }
-        }
-        return null;
+        $committee = DB::table('committee')
+            ->join('community', 'community.id', '=', 'committee.community')
+            ->select('committee.post')
+            ->where('committee.pycid', $this->pycid)
+            ->where('community.name', $communityName)
+            ->first();
+        return $committee->post;
     }
 }
