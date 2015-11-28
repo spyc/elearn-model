@@ -44,4 +44,31 @@ class Community extends Model
     {
         return $this->belongsToMany(User::class, 'committee', 'community', 'pycid');
     }
+
+    /**
+     * Get Community by name.
+     * 
+     * @param string $name
+     * @return Community|null
+     */
+    public static function getCommunityByName($name)
+    {
+        $community = Community::where('name', '=', $name)->first();
+        return $community;
+    }
+
+    /**
+     * Get Committee and Post.
+     * 
+     * @return array<\Illuminate\Database\Query\Builder>
+     */
+    public function getCommitteeWithPost()
+    {
+        $committee = User::select(['user.*', 'committee.post'])
+                        ->join('committee', 'user.pycid', '=', 'committee.pycid')
+                        ->where('committee.community', '=', $this->id)
+                        ->get();
+
+        return $committee;
+    }
 }
